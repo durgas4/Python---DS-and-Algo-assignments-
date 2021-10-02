@@ -4,19 +4,7 @@
 #if the absolute difference between each adjacent pair of elements strictly increases.
 # >>> expanding([1,3,7,2,9])
   #True
-def expanding(l):
-  x=[]
-  y=0
-  for i in range (len(l)-1):
-    y= l[i]-l[i-1]
-    if y<0:
-      y=-1*y
-    x.append(y)
-  for j in range(len(x)-1):
-    if abs(x[j])<abs(x[j-1]):
-      return False
-    j+=1
-  return True
+
       
 #2
 #Write a Python function sumsquare(l) that takes a nonempty list of
@@ -24,18 +12,7 @@ def expanding(l):
 #in l and even is the sum of squares of all the even numbers in l
 #>>> sumsquare([1,3,5])
 #[35, 0]
-def sumsquare(l):
-    out = []
-    e, o = 0, 0
-    for i in range(0, len(l)):
-        if l[i]%2 == 0:
-            e = e + l[i]**2
-        else:
-            o = o + l[i]**2
-    out.append(o)
-    out.append(e)
-    return out
-  
+
 #3
 #A two dimensional
 #matrix can be represented in Python row-wise, as a list of lists:
@@ -43,13 +20,79 @@ def sumsquare(l):
 #1  2  3  4
 #5  6  7  8
 #would be represented as [[1, 2, 3, 4], [5, 6, 7, 8]].
-def transpose(m):
-    l = []
-    a = []
-    for j in range(len(m[0])):
-        for i in range(len(m)):
-            l.append(m[i][j])
-        a.append(l)
-        l=[]
 
-    return a 
+def expanding(l):
+    if len(l) <= 2:
+        return(True)
+    diff = abs(l[1]-l[0])
+    return(diff < abs(l[2]-l[1]) and expanding(l[1:]))
+
+def expanding_iterative(l):
+    if len(l) <= 2:
+        return(True)
+    olddiff = abs(l[1]-l[0])
+    for i in range(2,len(l)):
+        newdiff = abs(l[i]-l[i-1])
+        if newdiff <= olddiff:
+            return(False)
+        olddiff = newdiff
+    return(True)
+
+####################
+
+def even(n):
+    return(n%2 == 0)
+
+def sumsquare(l):
+    oddsum = 0
+    evensum = 0
+    for n in l:
+        if even(n):
+            evensum += n*n
+        else:
+            oddsum += n*n
+    return([oddsum,evensum])
+
+###################
+
+def transpose(l):
+  outl = []
+  for row in l[:1]:
+    for i in range(len(row)):
+      outl.append([])
+  for row in l:   
+    for i in range(len(row)):
+      outl[i].append(row[i])
+  return(outl)
+
+###################
+
+import ast
+
+def parse(inp):
+  inp = ast.literal_eval(inp)
+  return (inp)
+
+fncall = input()
+lparen = fncall.find("(")
+rparen = fncall.rfind(")")
+fname = fncall[:lparen]
+farg = fncall[lparen+1:rparen]
+
+if fname == "expanding":
+  arg = parse(farg)
+  print(expanding(arg))
+
+if fname == "sumsquare":
+  arg = parse(farg)
+  print(sumsquare(arg))
+
+if fname == "transpose":
+  arg = parse(farg)
+  savearg = arg
+  ans = transpose(arg)
+  if savearg == arg:
+    print(ans)
+  else:
+    print("Side effect")
+
